@@ -1,0 +1,34 @@
+# Syntax Coloring Map For ExampleLibrary
+# :vim set noet:
+
+# Datatypes (KEYWORD1)
+FRAM	KEYWORD1
+
+# Methods and Functions (KEYWORD2)
+begin	KEYWORD2
+getManufacturerID	KEYWORD2
+getChipDensity	KEYWORD2
+getSizeInBytes	KEYWORD2
+read	KEYWORD2
+write	KEYWORD2
+readStatusRegister	KEYWORD2
+isStatusRegisterProtected	KEYWORD2
+enableWrite	KEYWORD2
+disableWrite	KEYWORD2
+isWritable	KEYWORD2
+sendCommand	KEYWORD2
+beginTransaction	KEYWORD2
+endTransaction	KEYWORD2
+
+# Instances (KEYWORD2)
+
+# Constants (LITERAL1)
+WRSR	LITERAL1
+WRITE	LITERAL1
+READ	LITERAL1
+WRDI	LITERAL1
+RDSR	LITERAL1
+WREN	LITERAL1
+FSTRD	LITERAL1
+RDID	LITERAL1
+SLEEP	LITERAL1

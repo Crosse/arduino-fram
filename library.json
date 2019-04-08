@@ -1,13 +1,17 @@
 {
     "name": "FRAM",
-    "description": "Enables communication with a Fujitsu FRAM chip",
+    "version": "0.1",
     "keywords": "fram, storage",
+    "description": "Enables communication with a Fujitsu FRAM chip",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Crosse/arduino-fram"
+    },
     "authors": {
         "name": "Seth Wright",
         "email": "seth@crosse.org",
         "url": "https://github.com/Crosse/[repo]"
     },
-    "version": "0.1",
     "license": "ISC",
     "frameworks": "Arduino",
     "platform": "atmelavr"
