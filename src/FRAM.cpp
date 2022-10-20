@@ -87,8 +87,29 @@ FRAM::getSizeInBytes()
     return moduleSizeInBytes * (uint32_t)getChipDensity();
 }
 
-uint8_t *
-FRAM::read(uint32_t address, uint8_t *b)
+void
+FRAM::setStatusPin(int pin)
+{
+    _sPin = pin;
+    pinMode(_sPin, OUTPUT);
+    digitalWrite(_sPin, LOW);
+}
+
+void
+FRAM::enableStatus()
+{
+    _doStatus = true;
+}
+
+void
+FRAM::disableStatus()
+{
+    _doStatus = false;
+}
+
+template <typename T>
+T*
+FRAM::read(uint32_t address, T *b)
 {
     if (address > _size)
         return NULL;
@@ -96,13 +117,18 @@ FRAM::read(uint32_t address, uint8_t *b)
     beginTransaction();
     SPI.transfer(READ);
     sendAddress(address);
-    *b = SPI.transfer(0x00);
+    *b = SPI.transfer((T)0x00);
     endTransaction();
     return b;
 }
 
+template uint8_t  *FRAM::read(uint32_t address, uint8_t *b);
+template uint16_t *FRAM::read(uint32_t address, uint16_t *b);
+template uint32_t *FRAM::read(uint32_t address, uint32_t *b);
+template uint64_t *FRAM::read(uint32_t address, uint64_t *b);
+
 uint8_t *
-FRAM::read(uint32_t address, uint8_t *buf, size_t len)
+FRAM::read(uint32_t address, uint8_t *buf, uint32_t len)
 {
     if ((address + len) > _size)
         return NULL;
@@ -111,7 +137,7 @@ FRAM::read(uint32_t address, uint8_t *buf, size_t len)
     SPI.transfer(READ);
     sendAddress(address);
 
-    for (size_t i = 0; i < len; i++)
+    for (uint32_t i = 0; i < len; i++)
         SPI.transfer(buf, len);
 
     endTransaction();
@@ -137,7 +163,7 @@ FRAM::write(uint32_t address, uint8_t b)
 }
 
 bool
-FRAM::write(uint32_t address, const uint8_t *buf, size_t len)
+FRAM::write(uint32_t address, const uint8_t *buf, uint32_t len)
 {
     if ((address + len) > _size)
         return false;
@@ -147,7 +173,7 @@ FRAM::write(uint32_t address, const uint8_t *buf, size_t len)
     SPI.transfer(WRITE);
     sendAddress(address);
 
-    for (size_t i = 0; i < len; i++)
+    for (uint32_t i = 0; i < len; i++)
         SPI.transfer(buf[i]);
 
     endTransaction();
@@ -206,6 +232,9 @@ FRAM::sendCommand(cmd_t command)
 void
 FRAM::beginTransaction()
 {
+    if (_doStatus)
+        digitalWrite(_sPin, HIGH);
+
     digitalWrite(_csPin, LOW);
     SPI.beginTransaction(SPISettings(40000000, MSBFIRST, SPI_MODE0));
 }
@@ -215,9 +244,13 @@ FRAM::endTransaction()
 {
     SPI.endTransaction();
     digitalWrite(_csPin, HIGH);
+
+    if (_doStatus)
+        digitalWrite(_sPin, LOW);
 }
 
-void sendAddress(uint32_t address)
+void
+sendAddress(uint32_t address)
 {
     uint8_t first, second, third;
     first = (address & 0xff0000) >> 16;

@@ -21,12 +21,17 @@ class FRAM {
         uint8_t getManufacturerID(void);
         uint8_t getChipDensity(void);
         uint32_t getSizeInBytes(void);
+        void setStatusPin(int pin);
+        void enableStatus();
+        void disableStatus();
 
-        uint8_t *read(uint32_t address, uint8_t *b);
-        unsigned char *read(uint32_t address, uint8_t *buf, size_t len);
+        template <typename T>
+        T *read(uint32_t address, T *b);
+
+        unsigned char *read(uint32_t address, uint8_t *buf, uint32_t len);
 
         bool write(uint32_t address, uint8_t b);
-        bool write(uint32_t address, const uint8_t *buf, size_t len);
+        bool write(uint32_t address, const uint8_t *buf, uint32_t len);
 
         uint8_t readStatusRegister(void);
         bool isStatusRegisterWriteProtected(void);
@@ -42,4 +47,6 @@ class FRAM {
         uint32_t _size;
         int _csPin;
         int _wpPin;
+        int _sPin;
+        bool _doStatus;
 };
